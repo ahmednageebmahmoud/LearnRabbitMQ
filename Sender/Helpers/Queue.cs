@@ -1,5 +1,7 @@
-﻿using RabbitMQ.Client.Events;
+﻿using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,11 +21,15 @@ namespace Sender.Helpers
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
 
+            var Arguments = new Dictionary<string, string>();
+            Arguments.Add("x-dead-letter-exchange", "myDeadMessagesExchange"); 
+            Arguments.Add("x-dead-letter-routing-key", "myCheckOutMessageQueue");
+
             channel.QueueDeclare(queue: queueName,
                      durable: false,
                      exclusive: false,
                      autoDelete: false,
-                     arguments: null);
+                     arguments: (IDictionary<string, object>)Arguments);
 
        
         }

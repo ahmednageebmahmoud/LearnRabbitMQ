@@ -64,3 +64,34 @@
                 body: Encoding.UTF8.GetBytes(message)
      );
 ```
+
+# #Define The Exchage And Queue For Dead Message Whene Declare A Queue
+```
+   var Arguments = new Dictionary<string, string>();
+        Arguments.Add("x-dead-letter-exchange", "myDeadMessagesExchange"); 
+        Arguments.Add("x-dead-letter-routing-key", "myCheckOutMessageQueue");
+    channel.QueueDeclare(
+        ...,
+        arguments: (IDictionary<string, object>)Arguments);
+```
+
+# #Reliable Publishing
+```
+    //To receive message session status if we set mandatory property = true, maby no queue binded with message echange
+    channel.BasicReturn += (object? sender, BasicReturnEventArgs e) =>
+    {
+        Console.WriteLine("The Message Sent To Echange Successfully But {0}",e.ReplyText);
+    };
+
+    //To receive a delivery tag for a send message status exchange. 
+    channel.BasicAcks += (object? sender, BasicAckEventArgs e)=>{
+        Console.WriteLine("The Message Delivery Tag Is {0}", e.DeliveryTag);
+
+    };
+
+    channel.BasicPublish(
+          ...,
+        mandatory: true //To tell me if this message has not moved to the queue, check the "BasicReturn" event.
+    );
+```
+
