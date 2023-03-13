@@ -20,7 +20,22 @@ namespace Receiver.Helpers
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();
 
-             
+            //Aply Consumer Prefetch On Channel
+            channel.BasicQos(
+                  prefetchSize: 0,
+                  prefetchCount: 2,//Per consumer limit
+                  global: true // true:shared across all consumers on the connection , false:shared across all consumers on the channel
+                );
+
+            channel.BasicNacks += (object? sender, BasicNackEventArgs e) =>
+            {
+                Console.WriteLine("The Message Is Nagtive Acknowledgement {01} ",e.DeliveryTag);
+            };
+            channel.BasicAcks  += (object? sender, BasicAckEventArgs e) =>
+            {
+                Console.WriteLine("The Message Is Acknowledgement {01} ", e.DeliveryTag);
+            };
+
             var consumer = new EventingBasicConsumer(channel);
             consumer.Received += (model, ea) =>
             {
@@ -64,5 +79,7 @@ namespace Receiver.Helpers
 
 
         }
+
+    
     }
 }
