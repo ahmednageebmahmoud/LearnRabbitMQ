@@ -32,13 +32,24 @@ namespace Receiver.Helpers
                 }
                 catch (Exception)
                 {
+                    //Apply Manual Positive Acknowledgement To Remove Message From Queue If We Need That
+                    channel.BasicAck(
+                        deliveryTag: ea.DeliveryTag, //Message Refrance
+                        multiple:false  
+                        );
+
+                    //Apply Manual Positive Acknowledgement To Remove Message From Queue If We Need That And we Cane Requeue This Message
+                    channel.BasicNack(
+                        deliveryTag: ea.DeliveryTag, //Message Refrance
+                        multiple: false,
+                        requeue: false //true: Requeue Aging in the Current Queue, false: Remove a message from the current queue and move it to the dead message queue. 
+                        );
+
+                    //Remove a message from the current queue and move it to the dead message queue
                     channel.BasicReject(
                     deliveryTag: ea.DeliveryTag, //Message Refrance
-                    /*
-                     true: Requeue Aging in the Current Queue 
-                     false: Remove a message from the current queue and move it to the dead message queue. 
-                     */
-                    requeue: false
+                    requeue: false //true: Requeue Aging in the Current Queue, false: Remove a message from the current queue and move it to the dead message queue. 
+
                     );
                 }
                 
@@ -47,7 +58,7 @@ namespace Receiver.Helpers
 
 
             channel.BasicConsume(queueName,
-                     autoAck: true,
+                     autoAck: true,//If We Need Active Auto Positive Acknowledgement To Remove Message From Queue Directly After Recive
                      consumer: consumer);
 
 
