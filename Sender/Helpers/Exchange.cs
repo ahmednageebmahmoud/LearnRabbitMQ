@@ -33,8 +33,9 @@ namespace Sender.Helpers
                  */
                 autoDelete: true,
                 /*
-                 true: it's mean durable so the exchange not removed if the RabbitMQ server restarted 
-                 false: it's mean transit so the exchange will removed if the RabbitMQ server restarted and recreate it if need to use it agine
+                 Message Persistence Concept
+                 true: In this case, the messages will be stored in memory, which means they will be durable, so the exchange will be lost if the RabbitMQ server restarts. 
+                 false: In this case, the message will be stored on disk and in memory; it is in mean transit, so the exchange will be read from disk and stored in memory if the server crashes or restarted.
                  */
                 durable: false 
                 );

@@ -115,3 +115,11 @@
         global: true // true:shared across all consumers on the connection , false:shared across all consumers on the channel
     );
 ```
+
+# #Consumer Priorities
+```
+  channel.BasicConsume(
+      ...
+      arguments: new Dictionary<string, object> { { "x-priority", 5 } }
+  );
+```
